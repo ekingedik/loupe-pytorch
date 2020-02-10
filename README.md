@@ -5,3 +5,5 @@ Converted the code from Antoine Miech, Ivan Laptev, Josef Sivic presented in <ht
 Inspired from <https://gist.github.com/catta202000/cbf5cae9199ccd72adddef452358df3b>
 
 The code is not extensively tested, please ping me if you notice any problems.
+
+LSTM-Loupe shows the use of NetVLAD layer for pooling the outputs of multiple LSTM's.
