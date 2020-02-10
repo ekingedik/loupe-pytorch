@@ -505,32 +505,3 @@ class NetFV(PoolingBaseModel):
             fv = self.context_gating(fv)
 
         return fv
-
-
-# inp_rnd = torch.randn((10, 3, 32))
-# inp_zrs = torch.zeros((10, 2, 32))
-
-# inp1 = torch.cat((inp_rnd, inp_zrs), 1)
-# inp2 = torch.cat((inp_zrs, inp_rnd), 1)
-
-# vlad = NetVLAD(feature_size=32, max_samples=5, cluster_size=8, output_dim=16)
-# rvlad = NetRVLAD(feature_size=32, max_samples=5, cluster_size=8, output_dim=16)
-# sbow = SoftDBoW(feature_size=32, max_samples=5, cluster_size=8, output_dim=16)
-# netfv = NetFV(feature_size=32, max_samples=5, cluster_size=8, output_dim=16)
-
-# out1 = vlad(inp1)
-# out2 = vlad(inp2)
-# print((out1 - out2).mean())
-
-# out1 = rvlad(inp1)
-# out2 = rvlad(inp2)
-# print((out1 - out2).mean())
-
-# out1 = sbow(inp1)
-# out2 = sbow(inp2)
-# print((out1 - out2).mean())
-
-# out1 = netfv(inp1)
-# out2 = netfv(inp2)
-# print((out1 - out2).mean())
-
