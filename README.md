@@ -8,4 +8,5 @@ The code is not extensively tested, please ping me if you notice any problems.
 
 LSTM-Loupe shows the use of NetVLAD layer for pooling the outputs of multiple LSTM's.
 
-loupe-pytorch includes the pytorch implementations of multiple learnable pooling layers.
+loupe-pytorch includes the pytorch implementations of multiple learnable pooling layers:
+NetVLAD, NetRVLAD, SoftDBoW and NetFV
