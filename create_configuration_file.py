@@ -32,15 +32,15 @@ all_perms = list(
 for i in np.arange(100):
     cur_perm = all_perms[i]
     cur_dict = {}
-    cur_dict['hid_dim']= cur_perm[0]
-    cur_dict['n_layers']= cur_perm[1]
-    cur_dict['batch_size']= cur_perm[2]
-    cur_dict['cluster_size']= cur_perm[3]
-    cur_dict['cluster_output_dim']= cur_perm[4]
-    cur_dict['lrs']= cur_perm[5]
-    cur_dict['gating']= cur_perm[6]
-    cur_dict['bnorm']= cur_perm[7]
-    cur_dict['experiment_id'] = int(i)
-    outf = Path().cwd() / 'config_files' / f"{i}.yaml"
-    with open(outf, 'w') as file:
+    cur_dict["hid_dim"] = cur_perm[0]
+    cur_dict["n_layers"] = cur_perm[1]
+    cur_dict["batch_size"] = cur_perm[2]
+    cur_dict["cluster_size"] = cur_perm[3]
+    cur_dict["cluster_output_dim"] = cur_perm[4]
+    cur_dict["lrs"] = cur_perm[5]
+    cur_dict["gating"] = cur_perm[6]
+    cur_dict["bnorm"] = cur_perm[7]
+    cur_dict["experiment_id"] = int(i)
+    outf = Path().cwd() / "config_files" / f"{i}.yaml"
+    with open(outf, "w") as file:
         _ = yaml.dump(cur_dict, file)
