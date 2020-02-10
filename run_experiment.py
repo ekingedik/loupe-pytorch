@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     cwd = os.getcwd()
     os.chdir("./results")
-    os.mkdir(exp_id)
+    os.mkdir(str(exp_id))
     os.chdir(cwd)
 
     for i in np.arange(num_epochs):
