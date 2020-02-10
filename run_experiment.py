@@ -11,8 +11,23 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from utils import IntervalsDataset, pad_collate
 from lstm_loupe import LSTMModel
+import argparse
+import os
+import yaml
 
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "-f",
+        "--config_file",
+        default="./config_files/0.yaml",
+        help="Configuration file to load.",
+    )
+    args = parser.parse_args()
+
+    with open(args.config_file, 'r') as f:
+        config = yaml.load(f,Loader=yaml.FullLoader)
 
     if torch.cuda.is_available():
         device = "cuda"
@@ -66,27 +81,34 @@ if __name__ == "__main__":
         stratify=y_train,
     )
 
+    inp_dim = 5
+    out_dim = 1
+    hid_dim = config['hid_dim']
+    n_layers = config['n_layers']
+    batch_size = config['batch_size']
+    bnorm = config['bnorm']
+    cluster_output_dim = config['cluster_output_dim']
+    cluster_size = config['cluster_size']
+    lr = config['lrs']
+    gating = config['gating']
+    exp_id = config['experiment_id']
+
     train_dataset = IntervalsDataset(X_train_acc, X_train_mic, y_train)
     val_dataset = IntervalsDataset(X_val_acc, X_val_mic, y_val)
     test_dataset = IntervalsDataset(X_test_acc, X_test_mic, y_test)
 
     dataloader_train = DataLoader(
-        train_dataset, batch_size=32, shuffle=True, collate_fn=pad_collate
+        train_dataset, batch_size=batch_size, shuffle=True, collate_fn=pad_collate
     )
 
     dataloader_val = DataLoader(
-        val_dataset, batch_size=32, shuffle=False, collate_fn=pad_collate
+        val_dataset, batch_size=batch_size, shuffle=False, collate_fn=pad_collate
     )
     dataloader_test = DataLoader(
-        test_dataset, batch_size=32, shuffle=False, collate_fn=pad_collate
+        test_dataset, batch_size=batch_size, shuffle=False, collate_fn=pad_collate
     )
 
-    inp_dim = 5
-    hid_dim = 32
-    n_layers = 2
-    out_dim = 1
-    batch_size = 32
-    num_epochs = 500
+    num_epochs = 100
     model = LSTMModel(
         inp_dim,
         hid_dim,
@@ -95,6 +117,8 @@ if __name__ == "__main__":
         cluster_size,
         cluster_output_dim,
         out_dim,
+        gating,
+        bnorm,
         device,
     )
     model = model.to(device)
@@ -102,12 +126,11 @@ if __name__ == "__main__":
     cl_weights = compute_class_weight("balanced", np.unique(labels_eff), labels_eff)
     cl_weights = torch.from_numpy(cl_weights).float()
     cl_weights = cl_weights.to(device)
-    # criterion = nn.BCEWithLogitsLoss(pos_weight=cl_weights[1])
-    criterion = nn.BCEWithLogitsLoss()
-    optimizer = torch.optim.Adam(model.parameters())
+    criterion = nn.BCEWithLogitsLoss(pos_weight=cl_weights[1])
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     # optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9,
     # nesterov=True)
-    scheduler = ReduceLROnPlateau(optimizer, "min", factor=0.8, patience=100)
+    scheduler = ReduceLROnPlateau(optimizer, "min", factor=0.8, patience=20)
 
     train_losses = []
     val_losses = []
@@ -115,8 +138,12 @@ if __name__ == "__main__":
     test_bacs = []
     val_bacs = []
 
-    for i in np.arange(num_epochs):
+    cwd = os.getcwd() 
+    os.chdir("./results")
+    os.mkdir(str(exp_id))
+    os.chdir(cwd)
 
+    for i in np.arange(num_epochs):
         model.train()
         running_loss = 0.0
         start = time.time()
@@ -206,14 +233,11 @@ if __name__ == "__main__":
         sys.stdout.flush()
         torch.save(
             model.state_dict(),
-            f"./Results-Loupe/"
-            f"LSTM_Vlad_8Clusters_Adam_withoutbalanced_weights_epoch_{i}.pt",
+            f"./results/{exp_id}/weights_epoch_{i}.pt",
         )
-        pkl.dump(
-            (train_losses, val_losses, train_bacs, val_bacs, test_bacs),
-            open(
-                f"./Results-Loupe/LSTM_Vlad_8Clusters_Adam_withoutbalanced_"
-                f"losses_bacs_dim{hid_dim}",
-                "wb",
-            ),
-        )
+    pkl.dump(
+        (train_losses, val_losses, train_bacs, val_bacs, test_bacs),
+        open(
+            f"./results/{exp_id}/losses_bacs.pkl","wb",
+        ),
+    )

@@ -5,7 +5,6 @@ import torch.nn.functional as F
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from loupe_pytorch import NetVLAD
 
-
 class LSTMModel(nn.Module):
     def __init__(
         self,
@@ -16,6 +15,8 @@ class LSTMModel(nn.Module):
         cluster_size,
         cluster_output_dim,
         output_dim,
+        gating,
+        bnorm,
         device,
     ):
         super(LSTMModel, self).__init__()
@@ -25,6 +26,8 @@ class LSTMModel(nn.Module):
         self.batch_size = batch_size
         self.cluster_size = cluster_size
         self.cluster_output_dim = cluster_output_dim
+        self.gating = gating
+        self.bnorm = bnorm
         self.lstm_acc_subject = nn.LSTM(
             input_dim, hidden_dim, layer_dim, batch_first=True
         )
@@ -43,7 +46,8 @@ class LSTMModel(nn.Module):
             max_samples=5,
             cluster_size=self.cluster_size,
             output_dim=self.cluster_output_dim,
-            gating=False,
+            gating=self.gating,
+            add_batch_norm = self.bnorm
         )
 
         self.vlad_mic = NetVLAD(
@@ -51,10 +55,11 @@ class LSTMModel(nn.Module):
             max_samples=5,
             cluster_size=self.cluster_size,
             output_dim=self.cluster_output_dim,
-            gating=False,
+            gating=self.gating,
+            add_batch_norm = self.bnorm
         )
 
-        self.fc1 = nn.Linear(self.cluster_output_dim * 2, 8)
+        self.fc1 = nn.Linear((self.cluster_output_dim * 2), 8)
         self.fcout = nn.Linear(8, output_dim)
         self.device = device
 
