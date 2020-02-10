@@ -27,7 +27,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     with open(args.config_file, 'r') as f:
-        config = yaml.load(f,Loader=yaml.FullLoader)
+        config = yaml.load(f, Loader=yaml.FullLoader)
 
     if torch.cuda.is_available():
         device = "cuda"
@@ -138,9 +138,9 @@ if __name__ == "__main__":
     test_bacs = []
     val_bacs = []
 
-    cwd = os.getcwd() 
+    cwd = os.getcwd()
     os.chdir("./results")
-    os.mkdir(str(exp_id))
+    os.mkdir(exp_id)
     os.chdir(cwd)
 
     for i in np.arange(num_epochs):
@@ -238,6 +238,6 @@ if __name__ == "__main__":
     pkl.dump(
         (train_losses, val_losses, train_bacs, val_bacs, test_bacs),
         open(
-            f"./results/{exp_id}/losses_bacs.pkl","wb",
+            f"./results/{exp_id}/losses_bacs.pkl", "wb",
         ),
     )
