@@ -1,6 +1,7 @@
 import yaml
 import itertools
 from pathlib import Path
+import numpy as np
 
 # Parameters
 hid_dim = [16, 32, 64, 128]
