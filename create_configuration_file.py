@@ -29,7 +29,7 @@ all_perms = list(
     )
 )
 
-for i in np.arange(100,500):
+for i in np.arange(500, 2500):
     cur_perm = all_perms[i]
     cur_dict = {}
     cur_dict["hid_dim"] = cur_perm[0]

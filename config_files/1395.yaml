@@ -1,0 +1,9 @@
+batch_size: 32
+bnorm: false
+cluster_output_dim: 8
+cluster_size: 4
+experiment_id: 1395
+gating: false
+hid_dim: 16
+lrs: 0.0001
+n_layers: 3
