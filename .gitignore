@@ -3,3 +3,7 @@ time_series_1min_padding_ready.pkl
 __pycache__/loupe_pytorch.cpython-37.pyc
 __pycache__/lstm_loupe.cpython-37.pyc
 __pycache__/utils.cpython-37.pyc
+results/
+__pycache__
+results-plots/
+config-files/
